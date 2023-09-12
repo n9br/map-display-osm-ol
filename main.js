@@ -11,7 +11,15 @@ const place = [19.49, 40.47];
 
 const point = new Point(place);
 
-// var pointLayer = new 
+var pointLayer = new VectorLayer({
+    source: new VectorSource({
+        features: [new Feature(point)]
+    }),
+    style: {
+        'circle-radius': 3,
+        'circle-fill-color': 'blue'
+    }
+})
 
 const map = new Map({
   target: 'map',
@@ -24,17 +32,20 @@ const map = new Map({
       source: new OSM(),
       visible: true
     }),
-    new VectorLayer({
-      source: new VectorSource({
-        features: [new Feature(point)],
-      }),
-      style: {
-        'circle-radius': 4,
-        'circle-fill-color': 'red',
-      },
-    }),
+    pointLayer
+    // new VectorLayer({
+    //   source: new VectorSource({
+    //     features: [new Feature(point)],
+    //   }),
+    //   style: {
+    //     'circle-radius': 4,
+    //     'circle-fill-color': 'red',
+    //   },
+    // }),
   ],
 });
+
+pointLayer.setVisible(true)
 
 const element = document.getElementById('popup');
 
