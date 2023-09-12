@@ -106,6 +106,15 @@ class City {
 }
 
 
+// #######  ORIGINAL #########
+// const place = [lon, lat];
+// const place = [19.49, 40.47]
+// const point = new Point(place)
+// feature = new Feature(point)
+
+let feature 
+featureList = []
+
 
 fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 // to JSON
@@ -116,28 +125,34 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 .then(json => {
     const cities = json.Items.map(item => new City(item))
     cities.forEach((c) => {
-        site = new Point([c.longitude, c.latitude])
-
-        console.log(site)
-    });
+        feature = new Feature(new Point([c.longitude, c.latitude]))
+        // console.log(feature)
+        featureList.push(feature)
     // console.log(cities)
+
+    // console.log(pointLayer)
+
+    });
+
+    // #######  MEINS #########
+    // let feature
+
+    var pointLayer = new VectorLayer({
+        source: new VectorSource({
+            features: featureList
+        }),
+        style: {
+            'circle-radius': 3,
+            'circle-fill-color': 'blue'
+        }
+        })
+   
+    // console.log(pointLayer)
+    // console.log(featureList)
+    // pointLayer.features = featureList
+    map.addLayer(pointLayer)
+    // pointLayer.setVisible(true)
 })
 
 
-// const place = [lon, lat];
-const place = [19.49, 40.47];
 
-const point = new Point(place);
-
-var pointLayer = new VectorLayer({
-    source: new VectorSource({
-        features: [new Feature(point)]
-    }),
-    style: {
-        'circle-radius': 3,
-        'circle-fill-color': 'blue'
-    }
-})
-
-map.addLayer(pointLayer)
-// pointLayer.setVisible(true)
