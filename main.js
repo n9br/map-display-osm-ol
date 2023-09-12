@@ -6,21 +6,33 @@ import {useGeographic} from 'ol/proj.js';
 
 useGeographic();
 
-center = [6.13,49.61]
+// const place = [-110, 45];
+const place = [19.49, 40.47];
+
+const point = new Point(place);
+
+var pointLayer = new VectorLayer({
+    source: new VectorSource({
+        features: [new Feature(point)]
+    }),
+    style: {
+        'circle-radius': 3,
+        'circle-fill-color': 'blue'
+    }
+})
 
 const map = new Map({
   target: 'map',
   view: new View({
-    // center: place,
-    center: center,
-    zoom: 4,
+    center: place,
+    zoom: 8,
   }),
   layers: [
     new TileLayer({
       source: new OSM(),
       visible: true
-    })
-    // pointLayer
+    }),
+    pointLayer
     // new VectorLayer({
     //   source: new VectorSource({
     //     features: [new Feature(point)],
@@ -33,6 +45,7 @@ const map = new Map({
   ],
 });
 
+pointLayer.setVisible(true)
 
 const element = document.getElementById('popup');
 
@@ -105,8 +118,6 @@ class City {
     }
 }
 
-
-
 fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 // to JSON
 .then(res => res.json())
@@ -115,29 +126,8 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 
 .then(json => {
     const cities = json.Items.map(item => new City(item))
-    cities.forEach((c) => {
-        site = new Point([c.longitude, c.latitude])
-
-        console.log(site)
-    });
-    // console.log(cities)
+    console.log(cities)
 })
 
 
-// const place = [lon, lat];
-const place = [19.49, 40.47];
-
-const point = new Point(place);
-
-var pointLayer = new VectorLayer({
-    source: new VectorSource({
-        features: [new Feature(point)]
-    }),
-    style: {
-        'circle-radius': 3,
-        'circle-fill-color': 'blue'
-    }
-})
-
-map.addLayer(pointLayer)
-// pointLayer.setVisible(true)
+   
