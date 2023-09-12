@@ -13,7 +13,7 @@ const map = new Map({
   view: new View({
     // center: place,
     center: center,
-    zoom: 4,
+    zoom: 4.5,
   }),
   layers: [
     new TileLayer({
@@ -44,20 +44,22 @@ map.addOverlay(popup);
 
         // <tr><th>lon</th><td>${coordinate[0].toFixed(2)}</td></tr>
         // <tr><th>lat</th><td>${coordinate[1].toFixed(2)}</td></tr>
+        // <tr><th>lon</th><td>${coordinate[0]}</td></tr>
+        // <tr><th>lat</th><td>${coordinate[1]}</td></tr>
         // console.log(coordinate[2].name)
         // <tr><th>Name</th><td>${name}</td></tr>
 
 function formatCoordinate(coordinate) {
-  // console.log(typeof(coordinate[2].name))
+  console.log(coordinate[2])
   country = coordinate[2].country
   cityname = coordinate[2].name
+  founding_year = coordinate[2].founding_year
   return `
     <table>
       <tbody>
-        <tr><th>Name</th><td>${cityname}</td></tr>
-        <tr><th>Name</th><td>${country}</td></tr>
-        <tr><th>lon</th><td>${coordinate[0]}</td></tr>
-        <tr><th>lat</th><td>${coordinate[1]}</td></tr>
+        <tr><th>${cityname}</th></tr>
+        <tr><td>(${country})</td></tr>
+        <tr><td>${founding_year}</td></tr>
       </tbody>
     </table>`;
 }
@@ -109,12 +111,14 @@ class City {
     country;
     latitude;
     longitude;
+    founding_year;
 
     constructor(data) {
         this.name = data.name.S;
         this.country = data.country.S;
         this.latitude = data.geography.M.latitude.N;
         this.longitude = data.geography.M.longitude.N;
+        this.founding_year = data.founding_year.S;
     }
 }
 
@@ -156,7 +160,7 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
             features: featureList
         }),
         style: {
-            'circle-radius': 2.5,
+            'circle-radius': 3,
             'circle-fill-color': 'blue'
             // 'circle-color': 'blue'
         }
