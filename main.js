@@ -6,33 +6,21 @@ import {useGeographic} from 'ol/proj.js';
 
 useGeographic();
 
-// const place = [-110, 45];
-const place = [19.49, 40.47];
-
-const point = new Point(place);
-
-var pointLayer = new VectorLayer({
-    source: new VectorSource({
-        features: [new Feature(point)]
-    }),
-    style: {
-        'circle-radius': 3,
-        'circle-fill-color': 'blue'
-    }
-})
+center = [6.13,49.61]
 
 const map = new Map({
   target: 'map',
   view: new View({
-    center: place,
-    zoom: 8,
+    // center: place,
+    center: center,
+    zoom: 4,
   }),
   layers: [
     new TileLayer({
       source: new OSM(),
       visible: true
-    }),
-    pointLayer
+    })
+    // pointLayer
     // new VectorLayer({
     //   source: new VectorSource({
     //     features: [new Feature(point)],
@@ -45,7 +33,6 @@ const map = new Map({
   ],
 });
 
-pointLayer.setVisible(true)
 
 const element = document.getElementById('popup');
 
@@ -118,6 +105,17 @@ class City {
     }
 }
 
+
+// #######  ORIGINAL #########
+// const place = [lon, lat];
+// const place = [19.49, 40.47]
+// const point = new Point(place)
+// feature = new Feature(point)
+
+let feature 
+featureList = []
+
+
 fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 // to JSON
 .then(res => res.json())
@@ -126,8 +124,35 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 
 .then(json => {
     const cities = json.Items.map(item => new City(item))
-    console.log(cities)
+    cities.forEach((c) => {
+        feature = new Feature(new Point([c.longitude, c.latitude]))
+        // console.log(feature)
+        featureList.push(feature)
+    // console.log(cities)
+
+    // console.log(pointLayer)
+
+    });
+
+    // #######  MEINS #########
+    // let feature
+
+    var pointLayer = new VectorLayer({
+        source: new VectorSource({
+            features: featureList
+        }),
+        style: {
+            'circle-radius': 3,
+            'circle-fill-color': 'blue'
+        }
+        })
+   
+    // console.log(pointLayer)
+    // console.log(featureList)
+    // pointLayer.features = featureList
+    map.addLayer(pointLayer)
+    // pointLayer.setVisible(true)
 })
 
 
-   
+
