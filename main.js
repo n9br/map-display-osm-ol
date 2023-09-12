@@ -33,7 +33,7 @@ const map = new Map({
   ],
 });
 
-
+// ####### POPUP LAYER #######
 const element = document.getElementById('popup');
 
 const popup = new Overlay({
@@ -42,12 +42,22 @@ const popup = new Overlay({
 });
 map.addOverlay(popup);
 
+        // <tr><th>lon</th><td>${coordinate[0].toFixed(2)}</td></tr>
+        // <tr><th>lat</th><td>${coordinate[1].toFixed(2)}</td></tr>
+        // console.log(coordinate[2].name)
+        // <tr><th>Name</th><td>${name}</td></tr>
+
 function formatCoordinate(coordinate) {
+  // console.log(typeof(coordinate[2].name))
+  country = coordinate[2].country
+  cityname = coordinate[2].name
   return `
     <table>
       <tbody>
-        <tr><th>lon</th><td>${coordinate[0].toFixed(2)}</td></tr>
-        <tr><th>lat</th><td>${coordinate[1].toFixed(2)}</td></tr>
+        <tr><th>Name</th><td>${cityname}</td></tr>
+        <tr><th>Name</th><td>${country}</td></tr>
+        <tr><th>lon</th><td>${coordinate[0]}</td></tr>
+        <tr><th>lat</th><td>${coordinate[1]}</td></tr>
       </tbody>
     </table>`;
 }
@@ -61,6 +71,7 @@ map.on('moveend', function () {
 
 let popover;
 map.on('click', function (event) {
+  // console.log(event)
   if (popover) {
     popover.dispose();
     popover = undefined;
@@ -69,7 +80,9 @@ map.on('click', function (event) {
   if (!feature) {
     return;
   }
-  const coordinate = feature.getGeometry().getCoordinates();
+  // console.log(feature.getGeometry().getFlatCoordinates())
+  const coordinate = feature.getGeometry().getFlatCoordinates();
+  // console.log(coordinate)
   popup.setPosition([
     coordinate[0] + Math.round(event.coordinate[0] / 360) * 360,
     coordinate[1],
@@ -125,7 +138,8 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 .then(json => {
     const cities = json.Items.map(item => new City(item))
     cities.forEach((c) => {
-        feature = new Feature(new Point([c.longitude, c.latitude]))
+        console.log(c)
+        feature = new Feature(new Point([c.longitude, c.latitude, c]))
         // console.log(feature)
         featureList.push(feature)
     // console.log(cities)
@@ -142,8 +156,9 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
             features: featureList
         }),
         style: {
-            'circle-radius': 3,
+            'circle-radius': 2.5,
             'circle-fill-color': 'blue'
+            // 'circle-color': 'blue'
         }
         })
    
