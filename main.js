@@ -48,18 +48,21 @@ map.addOverlay(popup);
         // <tr><th>lat</th><td>${coordinate[1]}</td></tr>
         // console.log(coordinate[2].name)
         // <tr><th>Name</th><td>${name}</td></tr>
+                // <tr><td>(${country})</td></tr>
+        // <tr><td>${founding_year}</td></tr>
+          // country = coordinate[2].country
+  // founding_year = coordinate[2].founding_year
 
 function formatCoordinate(coordinate) {
-  console.log(coordinate[2])
-  country = coordinate[2].country
-  cityname = coordinate[2].name
-  founding_year = coordinate[2].founding_year
+  // console.log(coordinate[2])
+  console.log(coordinate[3])
+  cityname = coordinate[2]
+  country = coordinate[3]
   return `
     <table>
       <tbody>
         <tr><th>${cityname}</th></tr>
-        <tr><td>(${country})</td></tr>
-        <tr><td>${founding_year}</td></tr>
+        <tr><td>${country}</td></tr>
       </tbody>
     </table>`;
 }
@@ -83,8 +86,9 @@ map.on('click', function (event) {
     return;
   }
   // console.log(feature.getGeometry().getFlatCoordinates())
+  // console.log(feature)
   const coordinate = feature.getGeometry().getFlatCoordinates();
-  // console.log(coordinate)
+  console.log(coordinate)
   popup.setPosition([
     coordinate[0] + Math.round(event.coordinate[0] / 360) * 360,
     coordinate[1],
@@ -142,8 +146,8 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
 .then(json => {
     const cities = json.Items.map(item => new City(item))
     cities.forEach((c) => {
-        console.log(c)
-        feature = new Feature(new Point([c.longitude, c.latitude, c]))
+        console.log(c.name)
+        feature = new Feature(new Point([c.longitude, c.latitude, c.name, c.country, c.founding_year]))
         // console.log(feature)
         featureList.push(feature)
     // console.log(cities)
