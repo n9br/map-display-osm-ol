@@ -147,7 +147,7 @@ fetch('https://phgvfum0bc.execute-api.eu-central-1.amazonaws.com/cities')
     const cities = json.Items.map(item => new City(item))
     cities.forEach((c) => {
         console.log(c.name)
-        feature = new Feature(new Point([c.longitude, c.latitude, c.name, c.country, c.founding_year]))
+        feature = new Feature(new Point([c.longitude, c.latitude, c.name, c.country]))
         // console.log(feature)
         featureList.push(feature)
     // console.log(cities)
