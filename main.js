@@ -45,8 +45,6 @@ const popup = new Overlay({
 });
 map.addOverlay(popup);
 
-        // <tr><th>lon</th><td>${coordinate[0].toFixed(2)}</td></tr>
-        // <tr><th>lat</th><td>${coordinate[1].toFixed(2)}</td></tr>
         // <tr><th>lon</th><td>${coordinate[0]}</td></tr>
         // <tr><th>lat</th><td>${coordinate[1]}</td></tr>
         // console.log(coordinate[2].name)
