@@ -6,9 +6,10 @@ import {useGeographic} from 'ol/proj.js';
 
 useGeographic();
 
-const citiesURL = 'https://t98fu97zx7.execute-api.eu-central-1.amazonaws.com/cities'
+const citiesURL = 'https://gimz520pd7.execute-api.eu-central-1.amazonaws.com/cities'
 
-center = [6.13,49.61]
+// let center = [6.13,49.61]
+const center = ["6.13","49.61"]
 
 const map = new Map({
   target: 'map',
@@ -58,8 +59,8 @@ map.addOverlay(popup);
 function formatCoordinate(coordinate) {
   // console.log(coordinate[2])
   // console.log(coordinate[3])
-  cityname = coordinate[2]
-  country = coordinate[3]
+  let cityname = coordinate[2]
+  let country = coordinate[3]
   return `
     <table>
       <tbody>
@@ -73,7 +74,7 @@ const info = document.getElementById('info');
 map.on('moveend', function () {
   const view = map.getView();
   const center = view.getCenter();
-  info.innerHTML = formatCoordinate(center);
+  // info.innerHTML = formatCoordinate(center);
 });
 
 let popover;
@@ -136,7 +137,7 @@ class City {
 // feature = new Feature(point)
 
 let feature 
-featureList = []
+let featureList = []
 
 
 fetch(citiesURL)
