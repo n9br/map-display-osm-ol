@@ -8,30 +8,43 @@ import LayerGroup from 'ol/layer/Group';
 useGeographic();
 
 const citiesURL = 'https://gimz520pd7.execute-api.eu-central-1.amazonaws.com/cities'
-
-// let center = [6.13,49.61]
 const center = ["6.13","49.61"]
 
+class City {
+  cname;
+  country;
+  latitude;
+  longitude;
+  founding_year;
+  rainy_days;
+
+  constructor(data) {
+      this.cname = data.name.S;
+      this.country = data.country.S;
+      this.latitude = data.geography.M.latitude.N;
+      this.longitude = data.geography.M.longitude.N;
+      this.founding_year = data.founding_year.S;
+      this.rainy_days = data.geography.M.rainy_days.N;
+  }
+}
+
+// Map
 const map = new Map({
   target: 'map',
   view: new View({
-    // center: place,
     center: center,
     zoom: 4.5,
-  }),
-  layers: [
-    new TileLayer({
-      source: new OSM(),
-      visible: true
-    })
-  ],
+  })
 });
+
+// Source
+const citySource = new VectorSource()
 
 // Layers
 
 const openStreetMapStandard = new TileLayer({
   source: new OSM(),
-  visible: false,
+  visible: true,
   title: "OSMStandard"
 })
 
@@ -43,21 +56,46 @@ const openStreetCycle = new TileLayer({
   title : 'OSMCycle' 
 })
 
+const cityLayer = new VectorLayer({
+  style: {
+    'circle-radius': 3,
+    'circle-fill-color': 'blue'
+    },
+  source: citySource,
+})
+
 // LayerGroup
 const baseLayerGroup = new LayerGroup({
-  layers: [
-    // openStreetMapStandard, openStreetCycle, pointLayer
-    openStreetMapStandard, openStreetCycle
-  ]
+  layers: [ openStreetMapStandard, openStreetCycle, cityLayer ]
 })
 
 map.addLayer(baseLayerGroup)
 
-// map.on('click', function(e) {
-//   console.log(e)
-// })
+// Get and Feed Features
+let feature 
+let featureList = []
 
-// ####### POPUP LAYER #######
+fetch(citiesURL)
+// to JSON
+.then(res => res.json())
+// but still marshalled ; uncomment to see in console
+// .then(json => console.log(json.Items[0].geography.M.rainy_days.N))
+
+.then(json => {
+    const cities = json.Items.map(item => new City(item))
+    cities.forEach((c) => {
+        // console.log(c.name)
+        feature = new Feature(new Point([c.longitude, c.latitude]))
+        feature.setProperties(c)
+        // console.log(feature.getProperties())
+        featureList.push(feature)
+    });
+
+    citySource.addFeatures(featureList)
+
+})
+
+// ####### POPUP OVerlay #######
 const element = document.getElementById('popup');
 
 const popup = new Overlay({
@@ -66,30 +104,21 @@ const popup = new Overlay({
 });
 map.addOverlay(popup);
 
-function formatCoordinate(coordinate) {
-  // console.log(coordinate[2])
-  // console.log(coordinate[3])
-  let cityname = coordinate[2]
-  let country = coordinate[3]
+// Format Popover
+function formatPopover(city) {
   return `
     <table>
       <tbody>
-        <tr><th>${cityname}</th></tr>
-        <tr><td>${country}</td></tr>
+        <tr><th>${city.cname}</th></tr>
+        <tr><td>${city.country}</td></tr>
+        <tr><td>rainy days: </td><td>${city.rainy_days}</td></tr>
       </tbody>
     </table>`;
 }
 
-// const info = document.getElementById('info');
-// map.on('moveend', function () {
-//   const view = map.getView();
-//   const center = view.getCenter();
-//   // info.innerHTML = formatCoordinate(center);
-// });
-
+// Handle Popover
 let popover;
 map.on('click', function (event) {
-  // console.log(event)
   if (popover) {
     popover.dispose();
     popover = undefined;
@@ -98,87 +127,33 @@ map.on('click', function (event) {
   if (!feature) {
     return;
   }
+  console.log(feature.getProperties())
   const coordinate = feature.getGeometry().getFlatCoordinates();
-  console.log(coordinate)
   popup.setPosition([
-    coordinate[0] + Math.round(event.coordinate[0] / 360) * 360,
+    // coordinate[0] + Math.round(event.coordinate[0] / 360) * 360,
+    coordinate[0],
     coordinate[1],
+    // console.log(coordinate[0])
   ]);
 
   popover = new bootstrap.Popover(element, {
     container: element.parentElement,
-    content: formatCoordinate(coordinate),
+    content: formatPopover(feature.getProperties()),
     html: true,
     offset: [0, 20],
     placement: 'top',
     sanitize: false,
   });
+  // console.log(element);
   popover.show();
 });
 
+// change Pointer over Feature
 map.on('pointermove', function (event) {
   const type = map.hasFeatureAtPixel(event.pixel) ? 'pointer' : 'inherit';
   map.getViewport().style.cursor = type;
 });
 
-class City {
-    name;
-    country;
-    latitude;
-    longitude;
-    founding_year;
-
-    constructor(data) {
-        this.name = data.name.S;
-        this.country = data.country.S;
-        this.latitude = data.geography.M.latitude.N;
-        this.longitude = data.geography.M.longitude.N;
-        this.founding_year = data.founding_year.S;
-    }
-}
-
-
-// #######  ORIGINAL #########
-// const place = [lon, lat];
-// const place = [19.49, 40.47]
-// const point = new Point(place)
-// feature = new Feature(point)
-
-let feature 
-let featureList = []
-
-
-fetch(citiesURL)
-// to JSON
-.then(res => res.json())
-// but still marshalled
-// .then(json => console.log(json.Items[0].name.S))
-
-.then(json => {
-    const cities = json.Items.map(item => new City(item))
-    cities.forEach((c) => {
-        console.log(c.name)
-        feature = new Feature(new Point([c.longitude, c.latitude, c.name, c.country]))
-        // console.log(feature)
-        featureList.push(feature)
-    });
-
-    // #######  MEINS #########
-    // let feature
-
-    var pointLayer = new VectorLayer({
-        source: new VectorSource({
-            features: featureList
-        }),
-        style: {
-            'circle-radius': 3,
-            'circle-fill-color': 'blue'
-            // 'circle-color': 'blue'
-        }
-        })
-   
-    map.addLayer(pointLayer)
-})
 
 
 
