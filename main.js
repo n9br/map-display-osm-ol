@@ -3,6 +3,7 @@ import {OSM, Vector as VectorSource} from 'ol/source.js';
 import {Point} from 'ol/geom.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {useGeographic} from 'ol/proj.js';
+import LayerGroup from 'ol/layer/Group';
 
 useGeographic();
 
@@ -23,18 +24,38 @@ const map = new Map({
       source: new OSM(),
       visible: true
     })
-    // pointLayer
-    // new VectorLayer({
-    //   source: new VectorSource({
-    //     features: [new Feature(point)],
-    //   }),
-    //   style: {
-    //     'circle-radius': 4,
-    //     'circle-fill-color': 'red',
-    //   },
-    // }),
   ],
 });
+
+// Layers
+
+const openStreetMapStandard = new TileLayer({
+  source: new OSM(),
+  visible: false,
+  title: "OSMStandard"
+})
+
+const openStreetCycle = new TileLayer({
+  source: new OSM({
+    url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
+   }),
+  visible : false,
+  title : 'OSMCycle' 
+})
+
+// LayerGroup
+const baseLayerGroup = new LayerGroup({
+  layers: [
+    // openStreetMapStandard, openStreetCycle, pointLayer
+    openStreetMapStandard, openStreetCycle
+  ]
+})
+
+map.addLayer(baseLayerGroup)
+
+// map.on('click', function(e) {
+//   console.log(e)
+// })
 
 // ####### POPUP LAYER #######
 const element = document.getElementById('popup');
@@ -44,15 +65,6 @@ const popup = new Overlay({
   stopEvent: false,
 });
 map.addOverlay(popup);
-
-        // <tr><th>lon</th><td>${coordinate[0]}</td></tr>
-        // <tr><th>lat</th><td>${coordinate[1]}</td></tr>
-        // console.log(coordinate[2].name)
-        // <tr><th>Name</th><td>${name}</td></tr>
-                // <tr><td>(${country})</td></tr>
-        // <tr><td>${founding_year}</td></tr>
-          // country = coordinate[2].country
-  // founding_year = coordinate[2].founding_year
 
 function formatCoordinate(coordinate) {
   // console.log(coordinate[2])
@@ -68,12 +80,12 @@ function formatCoordinate(coordinate) {
     </table>`;
 }
 
-const info = document.getElementById('info');
-map.on('moveend', function () {
-  const view = map.getView();
-  const center = view.getCenter();
-  // info.innerHTML = formatCoordinate(center);
-});
+// const info = document.getElementById('info');
+// map.on('moveend', function () {
+//   const view = map.getView();
+//   const center = view.getCenter();
+//   // info.innerHTML = formatCoordinate(center);
+// });
 
 let popover;
 map.on('click', function (event) {
@@ -86,8 +98,6 @@ map.on('click', function (event) {
   if (!feature) {
     return;
   }
-  // console.log(feature.getGeometry().getFlatCoordinates())
-  // console.log(feature)
   const coordinate = feature.getGeometry().getFlatCoordinates();
   console.log(coordinate)
   popup.setPosition([
@@ -151,10 +161,6 @@ fetch(citiesURL)
         feature = new Feature(new Point([c.longitude, c.latitude, c.name, c.country]))
         // console.log(feature)
         featureList.push(feature)
-    // console.log(cities)
-
-    // console.log(pointLayer)
-
     });
 
     // #######  MEINS #########
@@ -171,11 +177,7 @@ fetch(citiesURL)
         }
         })
    
-    // console.log(pointLayer)
-    // console.log(featureList)
-    // pointLayer.features = featureList
     map.addLayer(pointLayer)
-    // pointLayer.setVisible(true)
 })
 
 
