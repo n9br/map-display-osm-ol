@@ -3,7 +3,6 @@ import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import LayerGroup from 'ol/layer/Group';
 import {useGeographic} from 'ol/proj.js';
-import { map } from "./map";
 
 useGeographic();
 const center = ["6.13","49.61"]
