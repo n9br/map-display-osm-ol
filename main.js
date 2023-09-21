@@ -5,6 +5,11 @@ import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {useGeographic} from 'ol/proj.js';
 import LayerGroup from 'ol/layer/Group';
 
+const rainURL = new URL(
+  'px/rain.jpg?as=webp&width=25',
+  import.meta.url
+)
+
 useGeographic();
 
 const citiesURL = 'https://gimz520pd7.execute-api.eu-central-1.amazonaws.com/cities'
@@ -104,16 +109,21 @@ const popup = new Overlay({
 });
 map.addOverlay(popup);
 
+{/* <table>
+<tbody>
+<tr><td>${city.country}</td></tr>
+<tr><td>rainy days: </td><td>${city.rainy_days}</td></tr>
+</tbody>
+</table> */}
+
 // Format Popover
 function formatPopover(city) {
   return `
-    <table>
-      <tbody>
-        <tr><th>${city.cname}</th></tr>
-        <tr><td>${city.country}</td></tr>
-        <tr><td>rainy days: </td><td>${city.rainy_days}</td></tr>
-      </tbody>
-    </table>`;
+  <div>
+    ${city.country} <br>
+    <img src=${rainURL} /> ${city.rainy_days}
+  </div>  
+  `;
 }
 
 // Handle Popover
@@ -127,18 +137,19 @@ map.on('click', function (event) {
   if (!feature) {
     return;
   }
-  console.log(feature.getProperties())
+  featureProps = feature.getProperties()
+  console.log(featureProps.cname)
   const coordinate = feature.getGeometry().getFlatCoordinates();
   popup.setPosition([
     // coordinate[0] + Math.round(event.coordinate[0] / 360) * 360,
     coordinate[0],
     coordinate[1],
-    // console.log(coordinate[0])
   ]);
 
   popover = new bootstrap.Popover(element, {
     container: element.parentElement,
-    content: formatPopover(feature.getProperties()),
+    title: featureProps.cname,
+    content: formatPopover(featureProps),
     html: true,
     offset: [0, 20],
     placement: 'top',
