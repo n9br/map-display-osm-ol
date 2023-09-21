@@ -1,6 +1,8 @@
 import { Feature } from 'ol/index.js';
 import { Point } from 'ol/geom.js';
-import { City, citySource } from './main';
+
+import { City } from './City.js';
+import { citySource } from './map.js';
 
 const citiesURL = 'https://gimz520pd7.execute-api.eu-central-1.amazonaws.com/cities'
 
