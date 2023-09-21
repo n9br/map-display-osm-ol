@@ -1,6 +1,6 @@
 
 import { displayCities } from './displayCities';
-import { citySource, map } from './map';
+import { map } from './map';
 import { formatPopover, popup, element } from './popUpOver.js';
 
 let popover
