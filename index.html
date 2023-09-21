@@ -5,8 +5,11 @@
     <title>Geographic Coordinates</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="node_modules/ol/ol.css">
+    <link rel="stylesheet" href="./style.css">
     <!-- <script src="https://cdn.jsdelivr.net/npm/ol@v8.1.0/dist/ol.js"></script> -->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.1.0/ol.css"> -->
+    <!-- <script type="module" src="displayCities.js"></script> -->
+
 
     <style>
       .map {
@@ -23,29 +26,26 @@
     </style>
   </head>
   <body>
-    <div id="map" class="map">
-      <div id="popup"></div>
+    <div class="grid-container">
+      <div class="grid-1">
+        <div class="sidebar">
+          <h2>Filter Controls</h2>
+          MinSunHours <input type="text" id="minSunHours" value="0"> <br>
+          MaxSunHours <input type="text" id="maxSunHours" value="12"> <br>
+          MinRainDays <input type="text" id="minRainDays" value="0"> <br>
+          MaxRainDays <input type="text" id="maxRainDays" value="20"> <br>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div id="map" class="map">
+          <div id="popup"></div>
+        </div>
+      </div>
     </div>
-
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="main.js"></script>
 
-    <!-- <div class="d-flex flex-column">
-      <div class="d-flex flex-row align-items-center"> 
-        <div class="p-1"> <img src=${countryURL}/> </div>
-        <div class="p-1"> ${city.country} </div>
-      </div>
-      <div class="d-flex flex-row align-items-center">
-        <div class="p-1"> <img src=${sunURL}> </div>
-        <div class="p-1"> ${city.sun_hours} </div>
-      </div>
-      <div class="d-flex flex-row align-items-center">
-        <div class="p-1"> <img src=${rainURL}> </div>
-        <div class="p-1"> ${city.rainy_days} </div>
-      </div>
-    </div>   -->
-
-    <!-- <div ></div> -->
 
   </body>
 </html>

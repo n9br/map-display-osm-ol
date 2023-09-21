@@ -5,10 +5,34 @@ import { formatPopover, popup, element } from './popUpOver.js';
 
 let popover
 
-// Get and Feed Features
-displayCities()
+eleMinSH = document.getElementById('minSunHours')
+eleMaxSH = document.getElementById('maxSunHours')
+eleMinRD = document.getElementById('minRainDays')
+eleMaxRD = document.getElementById('maxRainDays')
 
-// citySource.clear()
+eleMinSH.addEventListener("change", function() {getValuesAndDisplay()})
+eleMaxSH.addEventListener("change", function() {getValuesAndDisplay()})
+eleMinRD.addEventListener("change", function() {getValuesAndDisplay()})
+eleMaxRD.addEventListener("change", function() {getValuesAndDisplay()})
+
+let MinSunHours
+let MaxSunHours
+let MinRainDays
+let MaxRainDays
+
+function getValuesAndDisplay() {
+  console.log(MinSunHours, MaxSunHours, MinRainDays, MaxRainDays)
+
+  MinSunHours = eleMinSH.value
+  MaxSunHours = eleMaxSH.value
+  MinRainDays = eleMinRD.value
+  MaxRainDays = eleMaxRD.value
+
+  displayCities(MinSunHours, MaxSunHours, MinRainDays, MaxRainDays)
+
+}
+
+getValuesAndDisplay()
 
 
 // Handle Popover

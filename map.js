@@ -5,14 +5,15 @@ import LayerGroup from 'ol/layer/Group';
 import {useGeographic} from 'ol/proj.js';
 
 useGeographic();
-const center = ["6.13","49.61"]
+// const center = ["6.13","49.61"]
+const center = ["14.44","50.08"]
 
 // Map
 export const map = new Map({
   target: 'map',
   view: new View({
     center: center,
-    zoom: 4.5,
+    zoom: 4.6,
   })
 });
 

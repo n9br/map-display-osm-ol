@@ -14,11 +14,11 @@ export function formatPopover(city) {
       </div>
       <div class="d-flex flex-row align-items-start"> 
         <div class="p-1"> <img src=${sunURL}> </div>
-        <div class="p-1"> ${city.sun_hours} h/m </div>
+        <div class="p-1"> ${city.sun_hours} h/d </div>
       </div>
       <div class="d-flex flex-row align-items-start"> 
         <div class="p-1"> <img src=${rainURL}> </div>
-        <div class="p-1"> ${city.rainy_days} d/a </div>
+        <div class="p-1"> ${city.rainy_days} d/m </div>
       </div>
   </div>  
   `;
