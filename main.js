@@ -6,7 +6,15 @@ import {useGeographic} from 'ol/proj.js';
 import LayerGroup from 'ol/layer/Group';
 
 const rainURL = new URL(
-  'px/rain.jpg?as=webp&width=25',
+  'px/rain.jpg?as=webp&width=47',
+  import.meta.url
+)
+const countryURL = new URL(
+  'px/country.png?as=webp&width=40',
+  import.meta.url
+)
+const sunURL = new URL(
+  'px/sun.png?as=webp&width=33',
   import.meta.url
 )
 
@@ -22,6 +30,7 @@ class City {
   longitude;
   founding_year;
   rainy_days;
+  sun_hours;
 
   constructor(data) {
       this.cname = data.name.S;
@@ -30,6 +39,7 @@ class City {
       this.longitude = data.geography.M.longitude.N;
       this.founding_year = data.founding_year.S;
       this.rainy_days = data.geography.M.rainy_days.N;
+      this.sun_hours = data.geography.M.monthly_sunshine_hours.N;
   }
 }
 
@@ -97,7 +107,6 @@ fetch(citiesURL)
     });
 
     citySource.addFeatures(featureList)
-
 })
 
 // ####### POPUP OVerlay #######
@@ -109,25 +118,31 @@ const popup = new Overlay({
 });
 map.addOverlay(popup);
 
-{/* <table>
-<tbody>
-<tr><td>${city.country}</td></tr>
-<tr><td>rainy days: </td><td>${city.rainy_days}</td></tr>
-</tbody>
-</table> */}
-
 // Format Popover
 function formatPopover(city) {
+
   return `
   <div>
-    ${city.country} <br>
-    <img src=${rainURL} /> ${city.rainy_days}
+      <div class="d-flex flex-row align-items-start"> 
+        <div class="p-1"> <img src=${countryURL}/> </div>
+        <div class="p-1"> ${city.country} </div>
+      </div>
+      <div class="d-flex flex-row align-items-start"> 
+        <div class="p-1"> <img src=${sunURL}> </div>
+        <div class="p-1"> ${city.sun_hours} h/m </div>
+      </div>
+      <div class="d-flex flex-row align-items-start"> 
+        <div class="p-1"> <img src=${rainURL}> </div>
+        <div class="p-1"> ${city.rainy_days} d/a </div>
+      </div>
   </div>  
   `;
 }
 
 // Handle Popover
 let popover;
+let featureProps;
+
 map.on('click', function (event) {
   if (popover) {
     popover.dispose();
@@ -138,7 +153,7 @@ map.on('click', function (event) {
     return;
   }
   featureProps = feature.getProperties()
-  console.log(featureProps.cname)
+  // console.log(featureProps)
   const coordinate = feature.getGeometry().getFlatCoordinates();
   popup.setPosition([
     // coordinate[0] + Math.round(event.coordinate[0] / 360) * 360,
