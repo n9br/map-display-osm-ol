@@ -1,9 +1,9 @@
-import {Feature, Map, Overlay, View} from 'ol/index.js';
+import {Map, Overlay, View} from 'ol/index.js';
 import {OSM, Vector as VectorSource} from 'ol/source.js';
-import {Point} from 'ol/geom.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {useGeographic} from 'ol/proj.js';
 import LayerGroup from 'ol/layer/Group';
+import { displayCities } from './displayCities';
 
 const rainURL = new URL(
   'px/rain.jpg?as=webp&width=47',
@@ -20,10 +20,10 @@ const sunURL = new URL(
 
 useGeographic();
 
-const citiesURL = 'https://gimz520pd7.execute-api.eu-central-1.amazonaws.com/cities'
 const center = ["6.13","49.61"]
+let popover;
 
-class City {
+export class City {
   cname;
   country;
   latitude;
@@ -53,7 +53,7 @@ const map = new Map({
 });
 
 // Source
-const citySource = new VectorSource()
+export const citySource = new VectorSource()
 
 // Layers
 
@@ -87,27 +87,12 @@ const baseLayerGroup = new LayerGroup({
 map.addLayer(baseLayerGroup)
 
 // Get and Feed Features
-let feature 
-let featureList = []
+displayCities()
 
-fetch(citiesURL)
-// to JSON
-.then(res => res.json())
-// but still marshalled ; uncomment to see in console
-// .then(json => console.log(json.Items[0].geography.M.rainy_days.N))
+console.log(citySource)
+citySource.clear()
+console.log(citySource)
 
-.then(json => {
-    const cities = json.Items.map(item => new City(item))
-    cities.forEach((c) => {
-        // console.log(c.name)
-        feature = new Feature(new Point([c.longitude, c.latitude]))
-        feature.setProperties(c)
-        // console.log(feature.getProperties())
-        featureList.push(feature)
-    });
-
-    citySource.addFeatures(featureList)
-})
 
 // ####### POPUP OVerlay #######
 const element = document.getElementById('popup');
@@ -140,21 +125,23 @@ function formatPopover(city) {
 }
 
 // Handle Popover
-let popover;
-let featureProps;
 
 map.on('click', function (event) {
+  
   if (popover) {
     popover.dispose();
     popover = undefined;
   }
+
   const feature = map.getFeaturesAtPixel(event.pixel)[0];
   if (!feature) {
     return;
   }
-  featureProps = feature.getProperties()
-  // console.log(featureProps)
+  
+  let featureProps = feature.getProperties();
   const coordinate = feature.getGeometry().getFlatCoordinates();
+    
+  // console.log(featureProps)
   popup.setPosition([
     // coordinate[0] + Math.round(event.coordinate[0] / 360) * 360,
     coordinate[0],
@@ -179,6 +166,7 @@ map.on('pointermove', function (event) {
   const type = map.hasFeatureAtPixel(event.pixel) ? 'pointer' : 'inherit';
   map.getViewport().style.cursor = type;
 });
+
 
 
 
