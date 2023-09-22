@@ -3,7 +3,7 @@ import { displayCities } from './displayCities';
 import { map } from './map';
 import { formatPopover, popup, element } from './popUpOver.js';
 
-let popover
+let popover, eleMinSH, eleMaxSH, eleMinRD, eleMaxRD
 
 eleMinSH = document.getElementById('minSunHours')
 eleMaxSH = document.getElementById('maxSunHours')
